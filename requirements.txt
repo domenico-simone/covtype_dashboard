@@ -3,6 +3,7 @@ pandas==1.5.2
 numpy==1.24.1
 seaborn==0.12.2
 matplotlib==3.6.2
-streamlit==1.7.0
+# https://discuss.streamlit.io/t/attributeerror-module-click-has-no-attribute-get-os-args/23621
+streamlit>=1.8.1
 # this is a patch - https://discuss.streamlit.io/t/typeerror-descriptors-cannot-not-be-created-directly/25639/4
 protobuf~=3.19.0
