@@ -40,8 +40,19 @@ if st.checkbox('Show raw data'):
 col1, col2 = st.columns(2)
 
 col1.subheader('Number of observations by covtype')
-fig = plt.figure(figsize=(7, 6))
-covtype_df.covtype.value_counts().plot(kind="bar", xlabel="covtype", ylabel="counts", rot=0)    
+
+log_scale = col1.selectbox(
+    'Y-axis scale',
+    ('Linear', 'Log10'))
+
+if log_scale == "Linear":
+    log_scale_bool = False
+else:
+    log_scale_bool = True
+
+fig = plt.figure(figsize=(7, 5))
+# covtype_df.covtype.value_counts().plot(kind="bar", xlabel="covtype", ylabel="counts", rot=0, logy=log_scale_bool)
+sns.countplot(x='covtype', data=covtype_df)
 col1.pyplot(fig)
 
 col2.subheader('Check covtype trends against dataset features')
