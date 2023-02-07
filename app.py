@@ -31,37 +31,48 @@ def load_data():
 
 data_load_state = st.text('Loading data...')
 covtype_df = load_data()
-data_load_state.text("Done! (using st.cache)")
+data_load_state.text("Data loaded! (using st.cache)")
 
-if st.checkbox('Show raw data'):
-    st.subheader('Raw data')
-    st.write(covtype_df)
+with st.container():
+    col1, col2 = st.columns(2)
 
-col1, col2 = st.columns(2)
+    col1.subheader('Correlation matrix')
 
-col1.subheader('Number of observations by covtype')
+    fig = plt.figure(figsize=(7, 7))
+    corrmatrix = covtype_df[['Elevation', 'Aspect', 'Slope', 'Horizontal_Distance_To_Hydrology', \
+                             'Vertical_Distance_To_Hydrology', 'Horizontal_Distance_To_Roadways', \
+                             'Hillshade_9am', 'Hillshade_Noon', 'Hillshade_3pm', 'Horizontal_Distance_To_Fire_Points']].corr()
+    ax = sns.heatmap(corrmatrix, square = True)
+    ax.set_xticklabels(ax.get_xticklabels(), rotation=30, horizontalalignment='right')
+    col1.pyplot(fig)
 
-log_scale = col1.selectbox(
-    'Y-axis scale',
-    ('Linear', 'Log10'))
+    col2.subheader('Raw data')
+    # if st.checkbox('Show raw data'):
+    col2.write(covtype_df, )
 
-if log_scale == "Linear":
-    log_scale_bool = False
-else:
-    log_scale_bool = True
+with st.container():
+    col1, col2 = st.columns(2)
 
-fig = plt.figure(figsize=(7, 5))
-# covtype_df.covtype.value_counts().plot(kind="bar", xlabel="covtype", ylabel="counts", rot=0, logy=log_scale_bool)
-sns.countplot(x='covtype', data=covtype_df)
-col1.pyplot(fig)
+    col1.subheader('Number of observations by covtype')
 
-col2.subheader('Check covtype trends against dataset features')
+    log_scale = col1.selectbox(
+        'Y-axis scale',
+        ('Linear', 'Log10'))
 
-# select which feature to plot
-plot_feature = col2.selectbox(
-    'Check the distribution of this feature according to covtype:',
-    ('Elevation', 'Aspect', 'Slope', 'Horizontal_Distance_To_Hydrology'))
+    fig = plt.figure(figsize=(7, 5))
+    if log_scale == "Linear":
+        sns.countplot(x='covtype', data=covtype_df)
+    else:
+        sns.countplot(x='covtype', data=covtype_df).set_yscale("log")
+    col1.pyplot(fig)
 
-fig = plt.figure(figsize=(7, 5))
-sns.violinplot(data=covtype_df, x=plot_feature, y="covtype")
-col2.pyplot(fig)
+    col2.subheader('Check covtype trends against dataset features')
+
+    # select which feature to plot
+    plot_feature = col2.selectbox(
+        'Check the distribution of this feature according to covtype:',
+        ('Elevation', 'Aspect', 'Slope', 'Horizontal_Distance_To_Hydrology'))
+
+    fig = plt.figure(figsize=(7, 5))
+    sns.violinplot(data=covtype_df, x=plot_feature, y="covtype")
+    col2.pyplot(fig)
